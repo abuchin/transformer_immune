@@ -6,6 +6,12 @@ A production-ready pipeline for analyzing immune cell data using transformer mod
 
 ```
 transformer_immune/
+├── notebook/
+│   ├── transformer_immune_cells_DATA.ipynb   # Data preparation notebook
+│   └── transformer_immune_cells_MODEL.ipynb  # Model training notebook
+├── transformer_immune_cells_DATA.py          # Data preparation pipeline
+├── transformer_immune_cells_MODEL.py         # Model training pipeline
+├── transformer_immune_cells_INFERENCE.py     # Inference pipeline
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                 # Configuration settings
@@ -23,8 +29,14 @@ transformer_immune/
 ├── logs/                        # Log files (created automatically)
 ├── results/                     # Results and plots (created automatically)
 ├── requirements.txt             # Python dependencies
+├── requirements_data.txt        # Data processing dependencies
+├── requirements_model.txt       # Model training dependencies
 ├── run_pipeline.py             # Main pipeline script
-└── README.md                   # This file
+├── example_usage.py            # Usage examples
+├── setup.py                    # Package installation
+├── README.md                   # This file
+├── README_PIPELINES.md         # Detailed pipeline documentation
+└── .gitignore                  # Git ignore file
 ```
 
 ## Features
@@ -36,6 +48,7 @@ transformer_immune/
 - **Geneformer Integration**: Uses the Geneformer pre-trained model for gene expression analysis
 - **Parallel Processing**: Efficient tokenization with parallel processing
 - **Comprehensive Evaluation**: Detailed metrics and visualization of results
+- **Multiple Usage Options**: Both Python scripts and Jupyter notebooks available
 
 ## Installation
 
@@ -47,7 +60,14 @@ transformer_immune/
 
 2. **Install dependencies**:
    ```bash
+   # Install main dependencies
    pip install -r requirements.txt
+   
+   # Install data processing dependencies (optional)
+   pip install -r requirements_data.txt
+   
+   # Install model training dependencies (optional)
+   pip install -r requirements_model.txt
    ```
 
 3. **Install Geneformer** (if not already installed):
@@ -57,43 +77,52 @@ transformer_immune/
    pip install ./Geneformer
    ```
 
-## Configuration
+## Usage Options
 
-The project uses a centralized configuration file (`src/config.py`) where you can modify:
+### Option 1: Using Python Scripts (Recommended for Production)
 
-- **Data paths**: Paths to input data and output directories
-- **Model parameters**: Learning rate, batch size, number of epochs
-- **Processing parameters**: Number of highly variable genes, sequence length
-- **Training parameters**: Layer freezing strategy, evaluation settings
+The main pipeline scripts are located in the `notebook/` directory:
 
-## Usage
-
-### Running the Complete Pipeline
-
-To run the entire pipeline from data preprocessing to inference:
-
+#### Data Preparation
 ```bash
-python run_pipeline.py
+python transformer_immune_cells_DATA.py \
+    --input-path data/raw_data.h5ad \
+    --output-dir processed_data \
+    --n-genes 2000 \
+    --verbose
 ```
 
-### Running Individual Steps
-
-You can also run individual steps of the pipeline:
-
+#### Model Training
 ```bash
-# Data preprocessing only
-python run_pipeline.py --preprocess-only
-
-# Model training only
-python run_pipeline.py --train-only
-
-# Inference only
-python run_pipeline.py --inference-only
+python transformer_immune_cells_MODEL.py \
+    --data-dir processed_data \
+    --output-dir model_results \
+    --num-epochs 10 \
+    --batch-size 128 \
+    --freeze-layers \
+    --use-small-data \
+    --verbose
 ```
 
-### Running Individual Scripts
+#### Inference
+```bash
+python transformer_immune_cells_INFERENCE.py \
+    --model-dir model_results/model/final_model \
+    --data-path new_data.h5ad \
+    --output-dir inference_results \
+    --verbose
+```
 
-You can also run the individual scripts directly:
+### Option 2: Using Jupyter Notebooks (Recommended for Development)
+
+For interactive development and exploration, use the Jupyter notebooks:
+
+- `notebook/transformer_immune_cells_DATA.ipynb` - Data preparation notebook
+- `notebook/transformer_immune_cells_MODEL.ipynb` - Model training notebook
+
+### Option 3: Using Modular Scripts
+
+You can also use the individual modular scripts in the `src/` directory:
 
 ```bash
 # Data preprocessing
@@ -106,6 +135,29 @@ python src/train_model.py
 python src/inference.py
 ```
 
+### Option 4: Using the Main Pipeline Script
+
+Run the complete pipeline using the main orchestrator:
+
+```bash
+# Run complete pipeline
+python run_pipeline.py
+
+# Run individual steps
+python run_pipeline.py --preprocess-only
+python run_pipeline.py --train-only
+python run_pipeline.py --inference-only
+```
+
+## Configuration
+
+The project uses a centralized configuration file (`src/config.py`) where you can modify:
+
+- **Data paths**: Paths to input data and output directories
+- **Model parameters**: Learning rate, batch size, number of epochs
+- **Processing parameters**: Number of highly variable genes, sequence length
+- **Training parameters**: Layer freezing strategy, evaluation settings
+
 ## Data Requirements
 
 The pipeline expects:
@@ -116,7 +168,7 @@ The pipeline expects:
 
 ## Pipeline Steps
 
-### 1. Data Preprocessing (`src/data_preprocessing.py`)
+### 1. Data Preparation (`transformer_immune_cells_DATA.py`)
 
 - Loads raw AnnData object
 - Preprocesses data (normalization, log transformation)
@@ -126,32 +178,33 @@ The pipeline expects:
 - Tokenizes data for transformer models
 - Splits data into train/test sets
 
-### 2. Model Training (`src/train_model.py`)
+### 2. Model Training (`transformer_immune_cells_MODEL.py`)
 
-- Loads pre-trained Geneformer model
-- Sets up training configuration
-- Freezes/unfreezes appropriate layers
-- Trains the model on tokenized data
-- Evaluates model performance
-- Saves trained model and results
+- Loads preprocessed and tokenized data
+- Sets up Geneformer model with custom configurations
+- Implements layer freezing/unfreezing strategies
+- Trains the model with comprehensive evaluation
+- Saves model checkpoints and final model
+- Generates training visualizations and reports
 
-### 3. Inference (`src/inference.py`)
+### 3. Inference (`transformer_immune_cells_INFERENCE.py`)
 
-- Loads trained model
+- Loads trained models and tokenizers
+- Supports both AnnData and pre-tokenized data
 - Makes predictions on new data
-- Calculates accuracy and other metrics
-- Saves prediction results
+- Saves results in multiple formats (JSON, CSV)
+- Calculates accuracy if true labels are available
 
 ## Output Files
 
 The pipeline generates several output files:
 
-- **Preprocessed Data**: `data/adata_nk_hvg.h5ad`
-- **Tokenized Datasets**: `data/tokenized_datasets/`
-- **Trained Model**: `models/trained_model/`
-- **Training Logs**: `logs/model_training.log`
-- **Results**: `results/evaluation_results.json`
-- **Plots**: `results/training_history.png`
+- **Preprocessed Data**: `processed_data/preprocessed/adata_processed.h5ad`
+- **Tokenized Datasets**: `processed_data/tokenized/`
+- **Trained Model**: `model_results/model/final_model/`
+- **Training Logs**: `model_results/logs/model_training.log`
+- **Results**: `model_results/results/evaluation_results.json`
+- **Plots**: `model_results/plots/training_history.png`
 
 ## Key Components
 
@@ -228,6 +281,11 @@ The pipeline includes comprehensive logging:
 ### Debug Mode
 
 For debugging, the pipeline creates smaller datasets (25% of original size) by default. You can modify this in the configuration.
+
+## Detailed Documentation
+
+For detailed information about the pipeline scripts and their options, see:
+- [README_PIPELINES.md](README_PIPELINES.md) - Comprehensive pipeline documentation
 
 ## Contributing
 
