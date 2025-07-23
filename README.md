@@ -296,9 +296,10 @@ For detailed information about the pipeline scripts and their options, see:
 If you use this code in your research, please cite:
 
 ```bibtex
-[Add citation information here]
+To be added...
 ```
 
 ## Contact
 
-[Add contact information here]
+Anatoly Buchin 2025
+anat.buchin@gmail.com
