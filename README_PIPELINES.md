@@ -24,8 +24,6 @@ transformer_immune/
 │   │   ├── tokenization.py             # Tokenization utilities
 │   │   └── model_utils.py              # Model training utilities
 ├── requirements.txt                     # Python dependencies
-├── requirements_data.txt                # Data processing dependencies
-├── requirements_model.txt               # Model training dependencies
 ├── README.md                           # Original README
 └── README_PIPELINES.md                 # This file
 ```

@@ -29,8 +29,6 @@ transformer_immune/
 ├── logs/                        # Log files (created automatically)
 ├── results/                     # Results and plots (created automatically)
 ├── requirements.txt             # Python dependencies
-├── requirements_data.txt        # Data processing dependencies
-├── requirements_model.txt       # Model training dependencies
 ├── run_pipeline.py             # Main pipeline script
 ├── example_usage.py            # Usage examples
 ├── setup.py                    # Package installation
@@ -60,14 +58,8 @@ transformer_immune/
 
 2. **Install dependencies**:
    ```bash
-   # Install main dependencies
+   # Install all dependencies
    pip install -r requirements.txt
-   
-   # Install data processing dependencies (optional)
-   pip install -r requirements_data.txt
-   
-   # Install model training dependencies (optional)
-   pip install -r requirements_model.txt
    ```
 
 3. **Install Geneformer** (if not already installed):
