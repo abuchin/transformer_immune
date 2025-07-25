@@ -52,7 +52,7 @@ transformer_immune/
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/abuchin/transformer_immune>
    cd transformer_immune
    ```
 
